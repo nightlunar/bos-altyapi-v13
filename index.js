@@ -6,7 +6,7 @@ const client = global.client = new Client({	allowedMentions: { parse: ['users', 
 const set = require("./settings.json");
 const { Database } =  require('ready.db')
 const  db  =  new  Database("settings.json")
-client.login("TOKEN")
+client.login("OTI3MTQxNzM1Nzk5MzU3NDUx.YdF6Bw.SnC4gNNOR6_YAK6PPUzgvWfNbYs")
 
 client.commands = new Collection();
 const { readdirSync } = require("fs");   
@@ -31,3 +31,15 @@ client.once("ready", async() => {
 });
     
 
+client.on("messageCreate", async (message) => {
+  if(message.author.bot) return;
+    if(message.content.startsWith(set.prefix)) {
+      const args = message.content.slice(set.prefix.length).trim().split(/ +/);
+      const command = args.shift().toLowerCase();
+  
+  
+      var cmd = client.commands.get(command) || Array.from(message.client.commands.values()).find((x) => x.aliases && x.aliases.includes(command));    
+      if(!cmd) return message.channel.send(`Komut dosyamda **${command}** adlı bir komut bulamadım.`);
+      try { cmd.run(client, message, args, set); } catch (error){ console.error(error); }
+    }
+    });   
